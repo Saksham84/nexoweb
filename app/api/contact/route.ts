@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Contact from "@/models/Contact";
-import { sendThankYouEmail } from "@/lib/mail";
+import { sendThankYouEmail, sendContactEmail } from "@/lib/mail";
 
 export async function POST(req: Request) {
   try {
@@ -19,6 +19,8 @@ export async function POST(req: Request) {
 
     // Save to DB
     await Contact.create({ name, email, message });
+
+    await sendContactEmail(email, name, message);
 
     // Send Thank You Email
     await sendThankYouEmail(email, name);
