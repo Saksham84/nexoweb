@@ -4,6 +4,7 @@ import { ArrowRight, Code, Zap, Shield, TrendingUp, Mail, Instagram, CheckCircle
 import { useState, useEffect } from 'react';
 import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import LoadingScreen from './components/LoadingScreen';
+import toast from "react-hot-toast";
 
 type Project = {
   _id: string;
@@ -101,6 +102,8 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [currentPage, setCurrentPage] = useState<'home' | 'projects'>('home');
 
+  const [submitting, setSubmitting] = useState(false);
+
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
@@ -163,11 +166,49 @@ export default function App() {
     setMobileMenuOpen(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thanks for reaching out! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setSubmitting(true);
+
+    // loading toast
+    const toastId = toast.loading("Sending your message...");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      // success toast
+      toast.success("Thanks for reaching out! We'll get back to you soon.", {
+        id: toastId,
+        duration: 3000,
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error: any) {
+      // error toast
+      toast.error(
+        error.message || "Server error. Please try again later.",
+        {
+          id: toastId,
+          duration: 3000,
+        }
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleProjectClick = (url: string) => {
@@ -731,10 +772,29 @@ export default function App() {
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/50 flex items-center justify-center gap-2 group"
+                    disabled={submitting}
+                    className={`
+    w-full py-4 rounded-xl font-semibold text-lg
+    transition-all duration-300
+    flex items-center justify-center gap-3
+    ${submitting
+                        ? "bg-emerald-500/60 cursor-not-allowed"
+                        : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-xl hover:shadow-emerald-500/50"
+                      }
+  `}
                   >
-                    Send Message
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    {submitting ? (
+                      <>
+                        {/* Spinner */}
+                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
                   </button>
                 </motion.form>
 
