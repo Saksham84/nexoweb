@@ -329,7 +329,16 @@ export default function App() {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <motion.div
-              className="md:hidden mt-4 py-4 border-t border-white/10"
+              className="
+                  md:hidden
+                  mt-4
+                  py-4
+                  rounded-2xl
+                  bg-slate-950/95
+                  backdrop-blur-lg
+                  shadow-xl
+                  border border-white/10
+                "
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -337,14 +346,20 @@ export default function App() {
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={item.action}
+                  onClick={() => {
+                    item.action();
+                    setMobileMenuOpen(false);
+                  }}
                   className="block w-full text-left py-3 text-blue-100 hover:text-emerald-400 transition-colors duration-300 font-medium"
                 >
                   {item.label}
                 </button>
               ))}
               <button
-                onClick={() => scrollToSection('contact')}
+                onClick={() => {
+                  scrollToSection('contact');
+                  setMobileMenuOpen(false);
+                }}
                 className="w-full mt-4 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full font-semibold"
               >
                 Get Started
