@@ -615,16 +615,16 @@ export default function App() {
                           loading="lazy"
                           decoding="async"
                           className="
-        w-full h-full
-        object-cover
-        transform-gpu
-        contrast-110
-        saturate-110
-        will-change-transform
-        group-hover:scale-[1.03]
-        transition-transform
-        duration-500
-      "
+                            w-full h-full
+                            object-cover
+                            transform-gpu
+                            contrast-110
+                            saturate-110
+                            will-change-transform
+                            group-hover:scale-[1.03]
+                            transition-transform
+                            duration-500
+                          "
                         />
 
                         {/* LIGHTER overlay (important change) */}
@@ -1020,9 +1020,21 @@ export default function App() {
                     {/* Website Preview */}
                     <div className="relative overflow-hidden aspect-video">
                       <ImageWithFallback
-                        src={`/api/image-proxy?url=${project.image}`}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={`/api/image-proxy?url=${encodeURIComponent(project.image)}`}
+                          alt={project.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="
+                            w-full h-full
+                            object-cover
+                            transform-gpu
+                            contrast-110
+                            saturate-110
+                            will-change-transform
+                            group-hover:scale-[1.03]
+                            transition-transform
+                            duration-500
+                          "
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 
