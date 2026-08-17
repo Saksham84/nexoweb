@@ -10,6 +10,7 @@ export async function GET() {
 
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
+    console.error("GET /api/projects failed:", error);
     return NextResponse.json(
       { message: "Failed to fetch projects" },
       { status: 500 }
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newProject, { status: 201 });
   } catch (error) {
+    console.error("POST /api/projects failed:", error);
     return NextResponse.json(
       { message: "Failed to create project" },
       { status: 500 }

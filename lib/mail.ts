@@ -45,15 +45,17 @@ export const clientTransporter = nodemailer.createTransport({
 /**
  * Verify transporters on server start (optional but recommended)
  */
-transporter.verify((err) => {
-  if (err) console.error("❌ EMAIL transporter error:", err);
-  else console.log("✅ EMAIL transporter ready");
-});
+if (process.env.NODE_ENV !== "production") {
+  transporter.verify((err) => {
+    if (err) console.error("❌ EMAIL transporter error:", err);
+    else console.log("✅ EMAIL transporter ready");
+  });
 
-clientTransporter.verify((err) => {
-  if (err) console.error("❌ CLIENT transporter error:", err);
-  else console.log("✅ CLIENT transporter ready");
-});
+  clientTransporter.verify((err) => {
+    if (err) console.error("❌ CLIENT transporter error:", err);
+    else console.log("✅ CLIENT transporter ready");
+  });
+}
 
 /**
  * Send admin notification when contact form is submitted

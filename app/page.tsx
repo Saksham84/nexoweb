@@ -126,10 +126,15 @@ export default function App() {
     const fetchProjects = async () => {
       try {
         const res = await fetch("/api/projects");
+        if (!res.ok) {
+          throw new Error(`Failed to fetch projects: ${res.status}`);
+        }
         const data = await res.json();
-        setAllProjects(data);
+        // Guard against non-array payloads (e.g. error objects) so the UI never crashes
+        setAllProjects(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Failed to fetch projects");
+        console.error("Failed to fetch projects", error);
+        setAllProjects([]);
       } finally {
         setLoading(false);
       }
@@ -197,10 +202,11 @@ export default function App() {
         email: "",
         message: "",
       });
-    } catch (error: any) {
-      // error toast
+    } catch (error) {
       toast.error(
-        error.message || "Server error. Please try again later.",
+        error instanceof Error
+          ? error.message
+          : "Server error. Please try again later.",
         {
           id: toastId,
           duration: 3000,
@@ -267,7 +273,7 @@ export default function App() {
 
   const featuredProjects = allProjects.filter(p => p.featured);
 
-  if (loading) return <LoadingScreen />;;
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
@@ -689,7 +695,7 @@ export default function App() {
                 <span className="text-emerald-400 font-semibold mb-2 block">WHY US</span>
                 <h2 className="text-4xl md:text-5xl font-bold mb-4">Why Choose Nexoweb?</h2>
                 <p className="text-xl text-blue-200 max-w-2xl mx-auto">
-                  We're not just developers—we're your partners in digital success
+                  We&apos;re not just developers—we&apos;re your partners in digital success
                 </p>
               </motion.div>
 
@@ -724,9 +730,9 @@ export default function App() {
                 transition={{ duration: 0.6 }}
               >
                 <span className="text-emerald-400 font-semibold mb-2 block">GET IN TOUCH</span>
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">Let's Work Together</h2>
+                <h2 className="text-4xl md:text-5xl font-bold mb-4">Let&apos;s Work Together</h2>
                 <p className="text-xl text-blue-200 max-w-2xl mx-auto">
-                  Ready to transform your online presence? Drop us a message and let's make it happen.
+                  Ready to transform your online presence? Drop us a message and let&apos;s make it happen.
                 </p>
               </motion.div>
 
@@ -841,7 +847,7 @@ export default function App() {
                       animate={{ y: [0, -5, 0] }}
                       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <h3 className="text-xl font-bold mb-4">Let's create something amazing</h3>
+                      <h3 className="text-xl font-bold mb-4">Let&apos;s create something amazing</h3>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 text-blue-200">
                           <Mail className="w-5 h-5 text-emerald-400" />
@@ -961,7 +967,7 @@ export default function App() {
                     onClick={() => scrollToSection('contact')}
                     className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/50 flex items-center justify-center gap-2 group"
                   >
-                    Let's build your website
+                    Let&apos;s build your website
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -1073,7 +1079,7 @@ export default function App() {
             >
               <h3 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h3>
               <p className="text-blue-200 text-lg mb-6 max-w-2xl mx-auto">
-                Let's bring your vision to life with a stunning, high-performance website
+                Let&apos;s bring your vision to life with a stunning, high-performance website
               </p>
               <button
                 onClick={() => {
